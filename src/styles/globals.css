@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+
+/* ───────────── Design tokens ───────────── */
+@theme {
+  --color-ivory: #faf8f3;
+  --color-cream: #f3ebdd;
+  --color-cream-deep: #eadfca;
+  --color-gold: #d69a24;
+  --color-gold-deep: #a8740f; /* AA-contrast gold for small text on ivory */
+  --color-charcoal: #242820;
+  --color-forest: #263d32;
+  --color-forest-deep: #1b2c24;
+  --color-muted: #6b6a63; /* slightly darker than #77766F for AA body contrast */
+  --color-terracotta: #b76843;
+  --color-line: #e4dccd;
+
+  --font-serif: 'DM Serif Display', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ───────────── Base ───────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-ivory font-sans text-charcoal antialiased;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+  /* Natural paper texture (inline SVG noise, ~1KB, no network request) */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .45 0 0 0 0 .3 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif font-normal;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-gold) 35%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  /* Anchor targets clear the fixed header */
+  [id] {
+    scroll-margin-top: 96px;
+  }
+}
+
+/* ───────────── Utilities ───────────── */
+@utility btn {
+  @apply relative inline-flex min-h-12 items-center justify-center gap-2.5 overflow-hidden rounded-full px-7 py-3 text-sm font-semibold tracking-wide transition-[background-color,color,border-color,box-shadow,transform] duration-300 ease-(--ease-premium) select-none active:scale-[0.98];
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-3 text-[0.7rem] font-semibold tracking-[0.24em] text-gold-deep uppercase;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply block h-px w-8 bg-current;
+  }
+  .section-y {
+    @apply py-20 sm:py-24 lg:py-32;
+  }
+
+  .btn-primary {
+    @apply btn bg-forest text-ivory hover:bg-forest-deep hover:shadow-[0_10px_30px_-12px_rgba(38,61,50,0.6)];
+  }
+  .btn-gold {
+    @apply btn bg-gold text-charcoal hover:bg-[#c78c1a] hover:shadow-[0_10px_30px_-12px_rgba(214,154,36,0.7)];
+  }
+  .btn-outline {
+    @apply btn border border-charcoal/20 text-charcoal hover:border-charcoal hover:bg-charcoal hover:text-ivory;
+  }
+  .btn-outline-light {
+    @apply btn border border-ivory/30 text-ivory hover:border-ivory hover:bg-ivory hover:text-forest;
+  }
+  .btn-whatsapp {
+    @apply btn bg-[#1f8f4e] text-white hover:bg-[#187a41] hover:shadow-[0_10px_30px_-12px_rgba(31,143,78,0.7)];
+  }
+
+  .link-underline {
+    @apply relative;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-premium);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  .field-label {
+    @apply mb-2 block text-[0.78rem] font-semibold tracking-wide text-charcoal;
+  }
+  .field-input {
+    @apply block w-full rounded-xl border border-line bg-white/70 px-4 py-3.5 text-[0.95rem] text-charcoal placeholder:text-muted/70 transition-[border-color,box-shadow,background-color] duration-200 outline-none focus:border-forest focus:bg-white focus:ring-4 focus:ring-forest/10;
+  }
+  .field-input[aria-invalid='true'] {
+    @apply border-terracotta focus:ring-terracotta/15;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    background: var(--color-forest);
+    color: var(--color-ivory);
+    font: 600 0.85rem var(--font-sans);
+    transition: top 0.2s;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
